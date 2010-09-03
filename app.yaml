@@ -1,0 +1,32 @@
+application: circulator-planning
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+
+- url: /favicon.ico
+  static_files: static/img/favicon.ico
+  upload: static/img/favicon.ico
+
+- url: /remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  login: admin
+
+- url: /static
+  static_dir: static
+
+- url: /survey
+  script: survey.py
+  
+- url: /batch/init
+  script: batch.py
+
+- url: /batch
+  script: batch.py
+
+- url: /data/.*
+  script: data.py
+
+- url: /.*
+  script: main.py
