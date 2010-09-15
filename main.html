@@ -6,18 +6,43 @@
 	<script language="javascript" src="static/js/json2.js"></script>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 	<script type="text/javascript">
-	  var map;
-	  var markers = new Array();
-	  var markersJS=new Array();
+	  var map3y;
+	  var map5y;
+	  var map10y;
+	
+	  var markers3y = new Array();
+	  var markersJS3y=new Array();
 
-	  var routes = new Array();
-	  var routesJS=new Array();
+	  var routes3y = new Array();
+	  var routesJS3y=new Array();
 
-	  var state;
-	  var loc;
+	  var markers5y = new Array();
+	  var markersJS5y=new Array();
+
+	  var routes5y = new Array();
+	  var routesJS5y=new Array();
+	
+	  var markers10y = new Array();
+	  var markersJS10y=new Array();
+
+	  var routes10y = new Array();
+	  var routesJS10y=new Array();
+
+	  var state3y;
+	  var loc3y;
+
+	  var state5y;
+	  var loc5y;
+
+	  var state5y;
+	  var loc5y;
+
 		
 	  function initialize() {
 		state="new";
+		state3y="new";
+		state5y="new";
+		state10y="new";
 	  	
 	    var latlng = new google.maps.LatLng(38.89545,-77.015871);
 	    var myOptions = {
@@ -25,84 +50,191 @@
 	      center: latlng,
 	      mapTypeId: google.maps.MapTypeId.ROADMAP
 	    };
-	    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+	    map3y = new google.maps.Map(document.getElementById("map_canvas_3y"), myOptions);
+	    map5y = new google.maps.Map(document.getElementById("map_canvas_5y"), myOptions);
+	    map10y = new google.maps.Map(document.getElementById("map_canvas_10y"), myOptions);
 
-	    google.maps.event.addListener(map, 'click', function(event) {
-	    	placeMarker(event.latLng);	
+	    google.maps.event.addListener(map3y, 'click', function(event) {
+	    	placeMarker3y(event.latLng);	
+	  	});
+	    google.maps.event.addListener(map5y, 'click', function(event) {
+	    	placeMarker5y(event.latLng);	
+	  	});
+	    google.maps.event.addListener(map10y, 'click', function(event) {
+	    	placeMarker10y(event.latLng);	
 	  	});
 	
-		var ctaLayer = new google.maps.KmlLayer('http://circulator-planning.appspot.com/static/data/routes.kml');
-	    ctaLayer.setMap(map);
-	
-	    //var ctaLayer2 = new google.maps.KmlLayer('http://gmaps-samples.googlecode.com/svn/trunk/ggeoxml/cta.kml');
-	    //ctaLayer2.setMap(map);
-	
-	    //alert("kml layer set")
-		
+	 google.maps.event.addListener(map3y, 'zoom_changed', function() {
+	    var zoom = map3y.getZoom();
+		if (zoom!=map5y.getZoom()) map5y.setZoom(zoom);
+		if (zoom!=map10y.getZoom()) map10y.setZoom(zoom);
+	  });
+	 google.maps.event.addListener(map3y, 'center_changed', function() {
+		var cntr=map3y.getCenter();
+		if (cntr.toString()!=map5y.getCenter().toString()) map5y.setCenter(cntr);
+		if (cntr.toString()!=map10y.getCenter().toString()) map10y.setCenter(cntr);
+	  });
 
+	 google.maps.event.addListener(map5y, 'zoom_changed', function() {
+	    var zoom = map5y.getZoom();
+		if (zoom!=map3y.getZoom()) map3y.setZoom(zoom);
+		if (zoom!=map10y.getZoom()) map10y.setZoom(zoom);
+	  });
+	 google.maps.event.addListener(map5y, 'center_changed', function() {
+		var cntr=map5y.getCenter();
+		if (cntr.toString()!=map3y.getCenter().toString()) map3y.setCenter(cntr);
+		if (cntr.toString()!=map10y.getCenter().toString()) map10y.setCenter(cntr);
+	  });
+	 google.maps.event.addListener(map10y, 'zoom_changed', function() {
+	    var zoom = map10y.getZoom();
+		if (zoom!=map3y.getZoom()) map3y.setZoom(zoom);
+		if (zoom!=map5y.getZoom()) map5y.setZoom(zoom);
+	  });
+	 google.maps.event.addListener(map10y, 'center_changed', function() {
+		var cntr=map10y.getCenter();
+		if (cntr.toString()!=map5y.getCenter().toString()) map5y.setCenter(cntr);
+		if (cntr.toString()!=map3y.getCenter().toString()) map3y.setCenter(cntr);
+	  });
+
+	
+		var ctaLayer3y = new google.maps.KmlLayer('http://circulator-planning.appspot.com/static/data/routes.kml');
+		var ctaLayer5y = new google.maps.KmlLayer('http://circulator-planning.appspot.com/static/data/routes.kml');
+		var ctaLayer10y = new google.maps.KmlLayer('http://circulator-planning.appspot.com/static/data/routes.kml');
+	    ctaLayer3y.setMap(map3y);
+	    ctaLayer5y.setMap(map5y);
+	    ctaLayer10y.setMap(map10y);
 	  }
 	
 
 	
-	function placeMarker(location) {
-	  //alert("place marker");
+	function placeMarker3y(location) {
 	  var image="static/img/red_MarkerO.png";
 	
-	  //alert(state);
-	
-	  if (state=="new") {
+	  if (state3y=="new") {
 		    image="static/img/red_MarkerO.png";
-			state="in process";
-   		   	loc=location;
+			state3y="in process";
+   		   	loc3y=location;
 		}
 	  else {
 		    image="static/img/red_MarkerD.png";
-			state="new";
+			state3y="new";
 			
-			var path = [loc,location];
-		    var route = new google.maps.Polyline({
-		      path: path,
-		      strokeColor: "#FF0000",
-		      strokeOpacity: 0.5,
-		      strokeWeight: 10
-		    });
+			var path = [loc3y,location];
+		    var route3y = new google.maps.Polyline({ path: path, strokeColor: "#FF0000", strokeOpacity: 0.5,strokeWeight: 10});
+			route3y.setMap(map3y);
+		  	routes3y.push(route3y);
 
-		   route.setMap(map);
-		
-		  routes.push(route);
-		  var routeJS={"origin_lat":loc.lat(), "origin_long":loc.lng(),"destination_lat":location.lat(), "destination_long":location.lng()};
+		    var route5y = new google.maps.Polyline({path: path,strokeColor: "#0000FF",strokeOpacity: 0.5,strokeWeight: 10});
+			route5y.setMap(map5y);
+		  	routes5y.push(route5y);
 
-		  routesJS.push(routesJS);
+		    var route10y = new google.maps.Polyline({path: path, strokeColor: "#00FF00",strokeOpacity: 0.5, strokeWeight: 10});
+			route10y.setMap(map10y);
+		  	routes10y.push(route10y);
 
+		  	var routeJS3y={"origin_lat":loc3y.lat(), "origin_long":loc3y.lng(),"destination_lat":location.lat(), "destination_long":location.lng()};
+		  	routesJS3y.push(routesJS3y);
 		}
 		
+			//alert("start marker");
+		  var marker3y = new google.maps.Marker({position: location, map: map3y,icon:image});
+		  markers3y.push(marker3y);
+		  var markerJS3y={"type":state3y,"lat":location.lat(), "long":location.lng()};
+		  markersJS3y.push(markerJS3y);
+			//alert("end marker");
 
-	  //var clickedLocation = new google.maps.LatLng(location);
-	  //var image = 'http://google-maps-icons.googlecode.com/files/cycling.png';
-	  var marker = new google.maps.Marker({
-	      position: location, 
-	      map: map,
-	      icon:image
-	  });
-	  
-	  markers.push(marker);
-	  var markerJS={"type":mode,"lat":location.lat(), "long":location.lng()};
-	  
-	  markersJS.push(markerJS);
-
-	  //alert(JSON.stringify(markersJS));
-
-	  //map.setCenter(location);
 	}
-	
-	function resetMap(){
-	 	for (m=0; m<markers.length; m++)
+		
+		
+	function placeMarker5y(location) {
+	  var image="static/img/red_MarkerO.png";
+
+	  if (state5y=="new") {
+		    image="static/img/red_MarkerO.png";
+			state5y="in process";
+   		   	loc5y=location;
+		}
+	  else {
+		    image="static/img/red_MarkerD.png";
+			state5y="new";
+
+			var path = [loc5y,location];
+		    var route5y = new google.maps.Polyline({ path: path, strokeColor: "#FF0000", strokeOpacity: 0.5,strokeWeight: 10});
+			route5y.setMap(map5y);
+		  	routes5y.push(route5y);
+
+		    var route10y = new google.maps.Polyline({path: path, strokeColor: "#0000FF",strokeOpacity: 0.5, strokeWeight: 10});
+			route10y.setMap(map10y);
+		  	routes10y.push(route10y);
+
+		  	var routeJS5y={"origin_lat":loc5y.lat(), "origin_long":loc5y.lng(),"destination_lat":location.lat(), "destination_long":location.lng()};
+		  	routesJS5y.push(routesJS5y);
+		}
+
+			//alert("start marker");
+		  var marker5y = new google.maps.Marker({position: location, map: map5y,icon:image});
+		  markers5y.push(marker5y);
+		  var markerJS5y={"type":state5y,"lat":location.lat(), "long":location.lng()};
+		  markersJS5y.push(markerJS5y);
+			//alert("end marker");
+
+	}
+	function placeMarker10y(location) {
+	  var image="static/img/red_MarkerO.png";
+
+	  if (state10y=="new") {
+		    image="static/img/red_MarkerO.png";
+			state10y="in process";
+   		   	loc10y=location;
+		}
+	  else {
+		    image="static/img/red_MarkerD.png";
+			state10y="new";
+
+			var path = [loc10y,location];
+		    var route10y = new google.maps.Polyline({ path: path, strokeColor: "#FF0000", strokeOpacity: 0.5,strokeWeight: 10});
+			route10y.setMap(map10y);
+		  	routes10y.push(route10y);
+
+		  	var routeJS10y={"origin_lat":loc10y.lat(), "origin_long":loc10y.lng(),"destination_lat":location.lat(), "destination_long":location.lng()};
+		  	routesJS10y.push(routesJS10y);
+		}
+
+			//alert("start marker");
+		  var marker10y = new google.maps.Marker({position: location, map: map10y,icon:image});
+		  markers10y.push(marker10y);
+		  var markerJS10y={"type":state10y,"lat":location.lat(), "long":location.lng()};
+		  markersJS10y.push(markerJS10y);
+			//alert("end marker");
+
+	}
+
+	function resetMap3y(){
+	 	for (m=0; m<markers3y.length; m++)
 		{
-			markers[m].setMap(null);
+			markers3y[m].setMap(null);
 		}
 		
-		markers=new Array();
-		markersJS= new Array();
+		markers3y=new Array();
+		markersJS3y= new Array();
+	}
+	function resetMap5y(){
+	 	for (m=0; m<markers5y.length; m++)
+		{
+			markers5y[m].setMap(null);
+		}
+		
+		markers5y=new Array();
+		markersJS5y= new Array();
+	}
+	function resetMap10y(){
+	 	for (m=0; m<markers10y.length; m++)
+		{
+			markers10y[m].setMap(null);
+		}
+		
+		markers10y=new Array();
+		markersJS10y= new Array();
 	}
 	
 	function formSubmit(){
@@ -141,13 +273,18 @@
 				Use map below to roughly define locations in DC that should be connected by future Circulator routes. It can be extensions to existing routes, or new locations not 		
 				connected to the existing routes. 
 				<br/>
+				<br/>
+				<hr width="100%"/>
+				<b>next 3 years</b>
+ 				<br/>
+				
 				<center>
-				<div id="map_canvas" style="width:750px; height:450px"></div>
+				<div id="map_canvas_3y" style="width:750px; height:450px"></div>
 				
 				<!--<input type="radio" name="group0" id="group0" value="Yes" checked> Origin &nbsp;
 				<input type="radio" name="group0" id="group0" value="No"> Destination &nbsp;  -->
 				
-				<input type="button" value="Reset map" onclick="javascript:resetMap();"/>
+				<input type="button" value="Reset map" onclick="javascript:resetMap3y();"/>
 				
 				</center>
 				
@@ -162,6 +299,63 @@
 			</div>
 
 			<br/>
+			
+			<div id="part1">
+				<hr width="100%"/>
+				<b>next 5 years</b>
+ 
+
+				<center>
+				<div id="map_canvas_5y" style="width:750px; height:450px"></div>
+				
+				<!--<input type="radio" name="group0" id="group0" value="Yes" checked> Origin &nbsp;
+				<input type="radio" name="group0" id="group0" value="No"> Destination &nbsp;  -->
+				
+				<input type="button" value="Reset map" onclick="javascript:resetMap5y();"/>
+				
+				</center>
+				
+			</div>
+			<br/>
+			<br/>
+
+			<div id="part0">
+				Please, explain in as much details as possible rationale for added locations/connections that you proposed:
+				<textarea cols="100" rows="5" name="explanation"></textarea> <br/>
+				<br/>
+			</div>
+
+			<br/>
+			
+			
+			<div id="part1">
+				<hr width="100%"/>
+				<b>next 10 years</b>
+ 
+				<br/>
+				<center>
+				<div id="map_canvas_10y" style="width:750px; height:450px"></div>
+				
+				<!--<input type="radio" name="group0" id="group0" value="Yes" checked> Origin &nbsp;
+				<input type="radio" name="group0" id="group0" value="No"> Destination &nbsp;  -->
+				
+				<input type="button" value="Reset map" onclick="javascript:resetMap10y();"/>
+				
+				</center>
+				
+			</div>
+			<br/>
+			<br/>
+
+			<div id="part0">
+				Please, explain in as much details as possible rationale for added locations/connections that you proposed:
+				<textarea cols="100" rows="5" name="explanation"></textarea> <br/>
+				<br/>
+			</div>
+
+			<br/>
+			<hr width="100%"/>
+			
 			<br/>
 			<div id="part2">
 				<b>Step 2 - Rider's profile</b> 
